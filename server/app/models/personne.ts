@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
-import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
+import { BaseModel, belongsTo, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import Voiture from '#models/voiture'
 import Conversation from '#models/conversation'
+import Ville from '#models/ville'
 
 export default class Personne extends BaseModel {
   @column({ isPrimary: true })
@@ -35,6 +36,9 @@ export default class Personne extends BaseModel {
   @column()
   declare role: string
 
+  @column()
+  declare id_ville: number
+
   @hasOne(() => Voiture)
   declare voiture: HasOne<typeof Voiture>
 
@@ -47,4 +51,7 @@ export default class Personne extends BaseModel {
     foreignKey: 'id_personne_2',
   })
   declare personne2: HasMany<typeof Conversation>
+
+  @belongsTo(() => Ville, { foreignKey: 'id_ville' })
+  declare ville: BelongsTo<typeof Ville>
 }
