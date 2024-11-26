@@ -4,6 +4,7 @@ import type { BelongsTo, HasMany, HasOne } from '@adonisjs/lucid/types/relations
 import Voiture from '#models/voiture'
 import Conversation from '#models/conversation'
 import Ville from '#models/ville'
+import Trajet from '#models/trajet'
 
 export default class Personne extends BaseModel {
   @column({ isPrimary: true })
@@ -51,6 +52,9 @@ export default class Personne extends BaseModel {
     foreignKey: 'id_personne_2',
   })
   declare personne2: HasMany<typeof Conversation>
+
+  @hasMany(() => Trajet, { foreignKey: 'id_personne' })
+  declare trajets: HasMany<typeof Trajet>
 
   @belongsTo(() => Ville, { foreignKey: 'id_ville' })
   declare ville: BelongsTo<typeof Ville>
