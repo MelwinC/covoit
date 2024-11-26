@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany, HasOne } from '@adonisjs/lucid/types/relations'
+import { BaseModel, belongsTo, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Voiture from '#models/voiture'
 import Conversation from '#models/conversation'
 import Ville from '#models/ville'
@@ -58,4 +58,13 @@ export default class Personne extends BaseModel {
 
   @belongsTo(() => Ville, { foreignKey: 'id_ville' })
   declare ville: BelongsTo<typeof Ville>
+
+  @manyToMany(() => Trajet, {
+    localKey: 'id',
+    relatedKey: 'id',
+    pivotForeignKey: 'id_personne',
+    pivotRelatedForeignKey: 'id_trajet',
+    pivotTable: 'inscrire',
+  })
+  declare trajetsInscris: ManyToMany<typeof Trajet>
 }
