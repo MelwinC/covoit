@@ -51,4 +51,18 @@ export default class PersonnesController {
    * Delete record
    */
   async destroy({ params }: HttpContext) {}
+
+  /**
+   * Handle login action
+   */
+  async login({ request, response }: HttpContext) {
+    try {
+      const { email, password } = request.all()
+      const token = await this.personneService.login(email, password)
+      return response.status(200).send(token)
+    } catch (error) {
+      console.error('Erreur lors de la connexion :', error)
+      return response.status(400).send({ error: error.message })
+    }
+  }
 }

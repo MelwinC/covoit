@@ -8,6 +8,7 @@ import Trajet from '#models/trajet'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
+import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -75,4 +76,6 @@ export default class Personne extends compose(BaseModel, AuthFinder) {
     pivotTable: 'inscrire',
   })
   declare trajetsInscris: ManyToMany<typeof Trajet>
+
+  static accessTokens = DbAccessTokensProvider.forModel(Personne)
 }

@@ -19,4 +19,15 @@ export class PersonneService {
       throw new Error('La création du compte a échoué.')
     }
   }
+
+  async login(email: string, password: string) {
+    try {
+      const user = await Personne.verifyCredentials(email, password)
+      const token = await Personne.accessTokens.create(user)
+      return token
+    } catch (err) {
+      console.error('Erreur lors de la connexion de la personne :', err)
+      throw new Error('La connexion du compte a échoué.')
+    }
+  }
 }

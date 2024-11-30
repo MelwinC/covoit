@@ -15,3 +15,4 @@ router.get('/', async () => {
   }
 })
 router.resource('personne', PersonnesController)
+router.post('personne/login', [PersonnesController, 'login'])
