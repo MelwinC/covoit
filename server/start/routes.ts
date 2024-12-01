@@ -40,3 +40,13 @@ router
       guards: ['api'],
     })
   )
+
+router
+  .group(() => {
+    router.resource('villes', 'VillesController').only(['index', 'store', 'show'])
+  })
+  .middleware(
+    middleware.auth({
+      guards: ['api'],
+    })
+  )
