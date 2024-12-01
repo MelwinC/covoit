@@ -30,7 +30,7 @@ export default class PersonnesController {
       return response.status(201).send({ message: 'Le compte a pu être créée' })
     } catch (error) {
       console.error('Erreur lors de la création de la personne :', error)
-      return response.status(400).send({ error: error.message })
+      return response.status(400).send({ error: error })
     }
   }
 
@@ -57,7 +57,7 @@ export default class PersonnesController {
       return response.status(200).send({ message: 'Le compte a pu être mis à jour' })
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la personne :', error)
-      return response.status(400).send({ error: error.message })
+      return response.status(400).send({ error: error })
     }
   }
 
@@ -70,7 +70,7 @@ export default class PersonnesController {
       return response.status(200).send({ message: 'Le compte a pu être supprimé' })
     } catch (error) {
       console.error('Erreur lors de la suppression de la personne :', error)
-      return response.status(400).send({ error: error.message })
+      return response.status(400).send({ error: error })
     }
   }
 
@@ -84,7 +84,7 @@ export default class PersonnesController {
       return response.status(200).send(token)
     } catch (error) {
       console.error('Erreur lors de la connexion :', error)
-      return response.status(400).send({ error: error.message })
+      return response.status(400).send({ error: error })
     }
   }
 }
