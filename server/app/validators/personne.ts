@@ -8,6 +8,7 @@ export const createPersonneValidator = vine.compile(
     telephone: vine.string(),
     username: vine.string(),
     password: vine.string(),
+    id_ville: vine.number(),
   })
 )
 
