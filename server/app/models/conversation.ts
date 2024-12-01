@@ -14,7 +14,7 @@ export default class Conversation extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  @hasMany(() => Message)
+  @hasMany(() => Message, { foreignKey: 'id_conversation' })
   declare messages: HasMany<typeof Message>
 
   @column()
