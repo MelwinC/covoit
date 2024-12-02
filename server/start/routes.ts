@@ -15,6 +15,7 @@ const PersonnesController = () => import('#controllers/personnes_controller')
 const ConversationsController = () => import('#controllers/conversations_controller')
 const MessagesController = () => import('#controllers/messages_controller')
 const VillesController = () => import('#controllers/villes_controller')
+const TrajetController = () => import('#controllers/trajet_controller')
 
 router.get('/', async () => {
   return {
@@ -83,6 +84,15 @@ router
 router
   .group(() => {
     router.resource('voitures.marques', MarquesController).only(['index', 'store'])
+  })
+  .middleware(
+    middleware.auth({
+      guards: ['api'],
+    })
+  )
+router
+  .group(() => {
+    router.resource('trajets', TrajetController).except(['create', 'edit'])
   })
   .middleware(
     middleware.auth({

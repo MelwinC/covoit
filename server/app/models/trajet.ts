@@ -14,7 +14,7 @@ export default class Trajet extends BaseModel {
   @column()
   declare place_proposees: number
 
-  @column.dateTime()
+  @column.dateTime({ columnName: 'dateT' })
   declare dateT: DateTime
 
   @column()
@@ -34,6 +34,9 @@ export default class Trajet extends BaseModel {
 
   @column()
   declare id_personne: number
+
+  @column()
+  declare id_user_proposeur: number
 
   @belongsTo(() => Ville, { foreignKey: 'id_ville1' })
   declare ville1: BelongsTo<typeof Ville>
