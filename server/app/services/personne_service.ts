@@ -1,5 +1,6 @@
 import Personne from '#models/personne'
-
+import Ville from '#models/ville'
+import db from '@adonisjs/lucid/services/db'
 interface PersonnePayload {
   prenom: string
   nom: string
@@ -7,18 +8,40 @@ interface PersonnePayload {
   telephone: string
   username: string
   password?: string
+  id_ville: number
 }
 
+interface PersonneUpdatePayload {
+  prenom?: string
+  nom?: string
+  email?: string
+  telephone?: string
+  username?: string
+  password?: string
+  id_ville?: number
+}
+
+const trx = await db.transaction()
+
 export class PersonneService {
-  register(payload: PersonnePayload) {
+  async register(payload: PersonnePayload) {
     try {
-      const personne = Personne.create(payload)
-      return personne
+      const user = await Personne.findBy('email', payload.email)
+      if (user !== null) {
+        throw new Error('Un utilisateur avec cet email existe déjà.')
+      }
+      const ville = await Ville.findBy('id', payload.id_ville)
+      if (ville === null) {
+        throw new Error("Cette ville n'existe pas.")
+      }
+      await trx.insertQuery().table('personnes').insert(payload)
+      await trx.commit()
     } catch (err) {
-      console.error('Erreur lors de la création de la personne :', err)
-      throw new Error('La création du compte a échoué.')
+      await trx.rollback()
+      throw err
     }
   }
+
   async index() {
     try {
       const personnes = await Personne.all()
@@ -39,8 +62,11 @@ export class PersonneService {
     }
   }
 
-  async update(id: number, payload: PersonnePayload) {
+  async update(id: number, idUser: number, payload: PersonneUpdatePayload) {
     try {
+      if (idUser !== id) {
+        throw new Error('Vous pouvez pas supprimer un compte d un autre utilisateur.')
+      }
       const personne = await Personne.findOrFail(id)
       personne.merge(payload)
       await personne.save()
@@ -51,13 +77,15 @@ export class PersonneService {
     }
   }
 
-  async destroy(id: number) {
+  async destroy(id: number, idUser: number) {
     try {
+      if (idUser !== id) {
+        throw new Error('Vous pouvez pas supprimer un compte d un autre utilisateur.')
+      }
       const personne = await Personne.findOrFail(id)
       await personne.delete()
     } catch (error) {
-      console.error('Erreur lors de la suppression de la personne :', error)
-      throw new Error('Erreur lors de la suppression de la personne.')
+      throw new Error(error.message)
     }
   }
 
@@ -65,9 +93,9 @@ export class PersonneService {
     try {
       const user = await Personne.verifyCredentials(email, password)
       const token = await Personne.accessTokens.create(user)
-      return token
+      return { token, user }
     } catch (err) {
-      console.error('Erreur lors de la connexion de la personne :', err)
+      console.log(err)
       throw new Error('La connexion du compte a échoué.')
     }
   }

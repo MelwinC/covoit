@@ -29,9 +29,9 @@ export default class Voiture extends BaseModel {
   @column()
   declare id_marque: number
 
-  @belongsTo(() => Personne)
+  @belongsTo(() => Personne, { foreignKey: 'id_personne' })
   declare personne: BelongsTo<typeof Personne>
 
-  @belongsTo(() => Marque)
+  @belongsTo(() => Marque, { foreignKey: 'id_marque' })
   declare marque: BelongsTo<typeof Marque>
 }
