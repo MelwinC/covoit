@@ -16,6 +16,6 @@ export default class Marque extends BaseModel {
   @column()
   declare nom: string
 
-  @hasMany(() => Voiture)
+  @hasMany(() => Voiture, { foreignKey: 'id_marque' })
   declare voiture: HasMany<typeof Voiture>
 }

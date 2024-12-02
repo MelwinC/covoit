@@ -6,14 +6,20 @@ interface ConversationPayload {
 }
 
 export class ConversationService {
-  store(payload: ConversationPayload, idPersonne1: number) {
+  async store(payload: ConversationPayload, idPersonne1: number) {
     try {
       payload.id_personne_1 = idPersonne1
-      const conversation = Conversation.create(payload)
+      const conversationAldreadyExist = await Conversation.query()
+        .where('id_personne_1', payload.id_personne_1)
+        .andWhere('id_personne_2', payload.id_personne_2)
+        .first()
+      if (conversationAldreadyExist) {
+        throw new Error('La conversation existe déjà.')
+      }
+      const conversation = await Conversation.create(payload)
       return conversation
     } catch (err) {
-      console.error('Erreur lors de la création de la conversation :', err)
-      throw new Error('La création de la conversation a échoué.')
+      throw new Error(err.message)
     }
   }
   async index(idPersonne: number) {

@@ -26,11 +26,10 @@ export default class PersonnesController {
   async store({ request, response }: HttpContext) {
     try {
       const payload = await request.validateUsing(createPersonneValidator)
-      this.personneService.register(payload)
+      await this.personneService.register(payload)
       return response.status(201).send({ message: 'Le compte a pu être créée' })
     } catch (error) {
-      console.error('Erreur lors de la création de la personne :', error)
-      return response.status(400).send({ error: error })
+      return response.status(400).send({ error: error.message })
     }
   }
 
@@ -43,34 +42,34 @@ export default class PersonnesController {
       return response.status(200).send(personne)
     } catch (error) {
       console.error('Erreur lors de la récupération de la personne :', error)
-      return response.status(500).send({ error: 'Impossible de récupérer la personne' })
+      return response.status(400).send({ error: 'Impossible de récupérer la personne' })
     }
   }
 
   /**
    * Handle form submission for the edit action
    */
-  async update({ params, request, response }: HttpContext) {
+  async update({ params, request, response, auth }: HttpContext) {
     try {
+      const user = auth.getUserOrFail()
       const payload = await request.validateUsing(updatePersonneValidator)
-      await this.personneService.update(params.id, payload)
+      await this.personneService.update(Number(params.id), user.id, payload)
       return response.status(200).send({ message: 'Le compte a pu être mis à jour' })
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de la personne :', error)
-      return response.status(400).send({ error: error })
+      return response.status(400).send({ error: error.message })
     }
   }
 
   /**
    * Delete record
    */
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, auth }: HttpContext) {
     try {
-      await this.personneService.destroy(params.id)
+      const user = auth.getUserOrFail()
+      await this.personneService.destroy(params.id, user.id)
       return response.status(200).send({ message: 'Le compte a pu être supprimé' })
     } catch (error) {
-      console.error('Erreur lors de la suppression de la personne :', error)
-      return response.status(400).send({ error: error })
+      return response.status(400).send({ error: error.message })
     }
   }
 
@@ -80,11 +79,10 @@ export default class PersonnesController {
   async login({ request, response }: HttpContext) {
     try {
       const { email, password } = request.all()
-      const token = await this.personneService.login(email, password)
-      return response.status(200).send(token)
-    } catch (error) {
-      console.error('Erreur lors de la connexion :', error)
-      return response.status(400).send({ error: error })
+      const res = await this.personneService.login(email, password)
+      return response.status(200).send(res)
+    } catch (err) {
+      return response.status(400).send({ error: err.message })
     }
   }
 }
