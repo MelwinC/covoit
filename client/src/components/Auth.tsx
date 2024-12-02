@@ -13,6 +13,7 @@ import { useState } from "react";
 
 const Register = () => {
   const [step, setStep] = useState<number>(1);
+  const [variant, setVariant] = useState<string>("login");
 
   const nextStep = () => {
     setStep(step + 1);
@@ -22,13 +23,19 @@ const Register = () => {
     setStep(step - 1);
   };
 
+  const toggleVariant = () => {
+    setVariant((currentVariant) =>
+      currentVariant === "login" ? "register" : "login"
+    );
+  };
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
       <h1 className="text-center font-semibold text-4xl mb-10">
-        Inscrivez-vous à AlloCovoit
+        {variant === "login" ? "Connectez-vous" : "Inscrivez-vous"} à AlloCovoit
       </h1>
       <div className="w-1/3">
-        {step === 1 && (
+        {variant === "register" && step === 1 && (
           <div className="flex flex-col gap-4">
             <Input type="text" placeholder="Nom" />
             <Input type="text" placeholder="Prénom" />
@@ -52,7 +59,7 @@ const Register = () => {
           </div>
         )}
 
-        {step === 2 && (
+        {(variant === "login" || step === 2) && (
           <div className="flex flex-col gap-4">
             <Input type="email" placeholder="Email" />
             <Input type="password" placeholder="Password" />
@@ -60,20 +67,31 @@ const Register = () => {
         )}
 
         <div className="flex justify-between mt-4">
-          {step === 2 && <Button onClick={prevStep}>Retour</Button>}
+          {variant === "register" && step === 2 && (
+            <Button onClick={prevStep}>Retour</Button>
+          )}
 
           <div className="w-full flex justify-end">
-            {step === 1 && <Button onClick={nextStep}>Suivant</Button>}
-            {step === 2 && <Button>S'inscrire</Button>}
+            {variant === "register" && step === 1 && (
+              <Button onClick={nextStep}>Suivant</Button>
+            )}
+
+            {(variant === "login" ||
+              (variant === "register" && step === 2)) && (
+              <Button>
+                {variant === "register" ? "S'inscrire" : "Se connecter"}
+              </Button>
+            )}
           </div>
         </div>
 
         <p className="mt-4">
           Vous avez déjà un compte ?{" "}
-          <span>
-            <a href="/" className="font-medium hover:underline">
-              Connexion
-            </a>
+          <span
+            onClick={toggleVariant}
+            className="font-medium hover:underline cursor-pointer"
+          >
+            Connexion
           </span>
         </p>
       </div>
