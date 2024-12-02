@@ -8,7 +8,6 @@ export default class extends BaseSchema {
       table.increments('id').primary()
       table.integer('km').notNullable()
       table.integer('place_proposees').notNullable()
-      table.integer('id_user_proposeur').notNullable()
       table.dateTime('dateT').notNullable()
       table
         .integer('id_personne')
