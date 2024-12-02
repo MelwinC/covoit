@@ -24,7 +24,7 @@ const Navigation = () => {
               <a href="/">Messages</a>
             </li>
             <li>
-              <a href="/">Contact</a>
+              <a href="/contact">Contact</a>
             </li>
           </ul>
         </div>
