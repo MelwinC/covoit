@@ -1,4 +1,5 @@
 import Trajet from '#models/trajet'
+import Personne from '#models/personne'
 import { DateTime } from 'luxon'
 
 interface TrajetPayload {
@@ -72,6 +73,47 @@ export class TrajetService {
       await trajet.delete()
     } catch (error) {
       throw new Error('Erreur lors de la suppresion du trajet, le trajet existe pas.')
+    }
+  }
+  async inscrirePersonneAuTrajet(idPersonne: number, idTrajet: number) {
+    try {
+      const personne = await Personne.findOrFail(idPersonne)
+      const trajet = await Trajet.findOrFail(idTrajet)
+      const placesDisponibles = trajet.place_proposees
+
+      // Vérifiez si la personne est déjà inscrite au trajet
+      const personneInscrit = await personne
+        .related('trajetsInscris')
+        .query()
+        .where('id_trajet', idTrajet)
+        .first()
+      if (personneInscrit) {
+        throw new Error('La personne est déjà inscrite à ce trajet.')
+      }
+
+      // Vérifiez s'il y a encore des places disponibles
+      const placesPrisesResult = await trajet.related('personnes').query().count('* as total')
+      const placesPrises = placesPrisesResult[0].$extras.total
+      if (placesDisponibles - placesPrises <= 0) {
+        throw new Error("Il n'y a plus de places disponibles pour ce trajet.")
+      }
+
+      await personne.related('trajetsInscris').attach([idTrajet])
+      return { message: 'Inscription réussie' }
+    } catch (error) {
+      throw error
+    }
+  }
+  async getPersonnesInscrites(idTrajet: number) {
+    try {
+      const trajet = await Trajet.findOrFail(idTrajet)
+      const personnes = await trajet
+        .related('personnes')
+        .query()
+        .select('id', 'prenom', 'nom', 'username', 'id_ville')
+      return personnes
+    } catch (error) {
+      throw new Error('Erreur lors de la récupération des personnes inscrites.')
     }
   }
 }

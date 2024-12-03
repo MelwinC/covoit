@@ -21,8 +21,6 @@ interface PersonneUpdatePayload {
   id_ville?: number
 }
 
-const trx = await db.transaction()
-
 export class PersonneService {
   async register(payload: PersonnePayload) {
     try {
@@ -30,14 +28,16 @@ export class PersonneService {
       if (user !== null) {
         throw new Error('Un utilisateur avec cet email existe déjà.')
       }
+      const userPhone = await Personne.findBy('telephone', payload.telephone)
+      if (userPhone !== null) {
+        throw new Error('Un utilisateur avec ce numéro de téléphone existe déjà.')
+      }
       const ville = await Ville.findBy('id', payload.id_ville)
       if (ville === null) {
         throw new Error("Cette ville n'existe pas.")
       }
-      await trx.insertQuery().table('personnes').insert(payload)
-      await trx.commit()
+      await Personne.create(payload)
     } catch (err) {
-      await trx.rollback()
       throw err
     }
   }
