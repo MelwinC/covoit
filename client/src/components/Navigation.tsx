@@ -18,10 +18,7 @@ const Navigation = () => {
               <a href="/">Trajet</a>
             </li>
             <li>
-              <a href="/">Mes trajets</a>
-            </li>
-            <li>
-              <a href="/">Messages</a>
+              <a href="/mes-trajets">Mes trajets</a>
             </li>
             <li>
               <a href="/contact">Contact</a>

@@ -20,7 +20,7 @@ const Contact = () => {
     <div className="max-w-4xl mt-10 mx-auto">
       <div>
         <h1 className="text-4xl text-center font-semibold">Nous contacter</h1>
-        <p className="text-base text-center opacity-80 mt-2">
+        <p className="text-base text-center text-gray-600 mt-2">
           Si vous avez une quelconque question, nous sommes la pour y répondre !
         </p>
       </div>
