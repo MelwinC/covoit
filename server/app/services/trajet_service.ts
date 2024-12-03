@@ -1,4 +1,5 @@
 import Trajet from '#models/trajet'
+import Personne from '#models/personne'
 import { DateTime } from 'luxon'
 
 interface TrajetPayload {
@@ -72,6 +73,17 @@ export class TrajetService {
       await trajet.delete()
     } catch (error) {
       throw new Error('Erreur lors de la suppresion du trajet, le trajet existe pas.')
+    }
+  }
+  async inscrirePersonneAuTrajet(idPersonne: number, idTrajet: number) {
+    try {
+      const personne = await Personne.findOrFail(idPersonne)
+      await Trajet.findOrFail(idTrajet)
+
+      await personne.related('trajetsInscris').attach([idTrajet])
+      return { message: 'Inscription réussie' }
+    } catch (error) {
+      throw new Error("Erreur lors de l'inscription au trajet.")
     }
   }
 }
