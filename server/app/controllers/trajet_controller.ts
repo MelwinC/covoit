@@ -64,5 +64,14 @@ export default class TrajetController {
   /**
    * Delete record
    */
-  async destroy({ params }: HttpContext) {}
+  async destroy({ params, auth, response }: HttpContext) {
+    try {
+      const user = auth.getUserOrFail()
+      await this.trajetService.destroy(user.id, params.id)
+      return response.status(200).send({ message: 'Trajet supprimé avec succès' })
+    } catch (error) {
+      console.warn(error)
+      return response.status(400).send({ error: error.message })
+    }
+  }
 }

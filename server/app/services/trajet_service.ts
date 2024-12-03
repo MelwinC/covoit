@@ -62,4 +62,16 @@ export class TrajetService {
       throw new Error('Erreur lors de la récupération du trajet.')
     }
   }
+
+  async destroy(idUser: number, idTrajet: number) {
+    try {
+      const trajet = await Trajet.findOrFail(idTrajet)
+      if (trajet.id_personne !== idUser) {
+        throw new Error('Vous êtes pas autorisé à supprimer cette ressource')
+      }
+      await trajet.delete()
+    } catch (error) {
+      throw new Error('Erreur lors de la suppresion du trajet, le trajet existe pas.')
+    }
+  }
 }
