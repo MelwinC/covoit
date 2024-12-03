@@ -31,13 +31,15 @@ function App() {
         <Button>Rechercher</Button>
       </div>
 
-      <div className="mt-16 flex flex-col">
-        <Trajet />
-        <Trajet />
-        <Trajet />
-        <Trajet />
-        <Trajet />
-        <Trajet />
+      <div className="flex flex-col">
+        <Trajet createMode={false} />
+        <Trajet createMode={false} />
+        <Trajet createMode={false} />
+        <Trajet createMode={false} />
+        <Trajet createMode={false} />
+        <Trajet createMode={false} />
+        <Trajet createMode={false} />
+        <Trajet createMode={false} />
       </div>
     </main>
   );

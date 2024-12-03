@@ -6,6 +6,7 @@ import Auth from "./components/Auth.tsx";
 import Navigation from "./components/Navigation.tsx";
 import Contact from "./pages/Contact.tsx";
 import Profil from "./pages/Profil.tsx";
+import MesTrajets from "./pages/MesTrajets.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -13,6 +14,7 @@ createRoot(document.getElementById("root")!).render(
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/mes-trajets" element={<MesTrajets />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/profil" element={<Profil />} />
     </Routes>
