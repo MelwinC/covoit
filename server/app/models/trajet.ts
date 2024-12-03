@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
-import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, belongsTo, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Personne from '#models/personne'
+import Ville from '#models/ville'
 
 export default class Trajet extends BaseModel {
   @column({ isPrimary: true })
@@ -13,7 +14,7 @@ export default class Trajet extends BaseModel {
   @column()
   declare place_proposees: number
 
-  @column.dateTime()
+  @column.dateTime({ columnName: 'dateT' })
   declare dateT: DateTime
 
   @column()
@@ -24,6 +25,24 @@ export default class Trajet extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @column()
+  declare id_ville_1: number
+
+  @column()
+  declare id_ville_2: number
+
+  @column()
+  declare id_personne: number
+
+  @column()
+  declare id_user_proposeur: number
+
+  @belongsTo(() => Ville, { foreignKey: 'id_ville_1' })
+  declare ville1: BelongsTo<typeof Ville>
+
+  @belongsTo(() => Ville, { foreignKey: 'id_ville_2' })
+  declare ville2: BelongsTo<typeof Ville>
 
   @hasMany(() => Trajet, { foreignKey: 'id_personne' })
   declare personne: HasMany<typeof Trajet>
