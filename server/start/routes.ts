@@ -25,7 +25,7 @@ router.get('/', async () => {
 
 router
   .group(() => {
-    router.resource('personnes', PersonnesController).except(['create', 'edit'])
+    router.resource('personnes', PersonnesController).except(['create', 'edit', 'store'])
   })
   .middleware(
     middleware.auth({
@@ -34,7 +34,7 @@ router
   )
 
 router.group(() => {
-  router.resource('personnes', PersonnesController).only(['create'])
+  router.resource('personnes', PersonnesController).only(['store'])
 })
 
 router
