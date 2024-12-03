@@ -14,7 +14,7 @@ export default class TrajetController {
       const trajets = await this.trajetService.index()
       return response.status(200).send(trajets)
     } catch (error) {
-      return response.status(500).send({ error: 'Impossible de récupérer les trajets' })
+      return response.status(500).send({ error: error.message })
     }
   }
 

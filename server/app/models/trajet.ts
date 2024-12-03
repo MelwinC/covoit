@@ -38,10 +38,10 @@ export default class Trajet extends BaseModel {
   @column()
   declare id_user_proposeur: number
 
-  @belongsTo(() => Ville, { foreignKey: 'id_ville1' })
+  @belongsTo(() => Ville, { foreignKey: 'id_ville_1' })
   declare ville1: BelongsTo<typeof Ville>
 
-  @belongsTo(() => Ville, { foreignKey: 'id_ville2' })
+  @belongsTo(() => Ville, { foreignKey: 'id_ville_2' })
   declare ville2: BelongsTo<typeof Ville>
 
   @hasMany(() => Trajet, { foreignKey: 'id_personne' })
