@@ -36,12 +36,30 @@ export default class TrajetController {
   /**
    * Show individual record
    */
-  async show({ params }: HttpContext) {}
+  async show({ params, response }: HttpContext) {
+    try {
+      const trajet = await this.trajetService.show(params.id)
+      return response.status(200).send(trajet)
+    } catch (error) {
+      console.warn(error)
+      return response.status(400).send({ error: error.message })
+    }
+  }
 
   /**
    * Handle form submission for the edit action
    */
-  async update({ params, request }: HttpContext) {}
+  async update({ params, request, response, auth }: HttpContext) {
+    try {
+      const payload = await request.validateUsing(createTrajetValidator)
+      const user = auth.getUserOrFail()
+      await this.trajetService.update(payload, user.id, params.id)
+      return response.status(201).send({ message: 'Trajet mis à jour avec succès' })
+    } catch (error) {
+      console.warn(error)
+      return response.status(400).send({ error: error })
+    }
+  }
 
   /**
    * Delete record

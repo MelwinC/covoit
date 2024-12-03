@@ -28,7 +28,6 @@ export class TrajetService {
         ville2: trajet.ville2.ville,
       }))
     } catch (error) {
-      console.warn(error)
       throw new Error('Erreur lors de la récupération des trajets.')
     }
   }
@@ -38,8 +37,29 @@ export class TrajetService {
       const trajet = Trajet.create(payload)
       return trajet
     } catch (error) {
-      console.warn(error)
       throw new Error('Erreur lors de la création de la ville.')
+    }
+  }
+
+  async update(payload: TrajetPayload, idUser: number, idTrajet: number) {
+    try {
+      const trajet = await Trajet.findOrFail(idTrajet)
+      if (trajet.id_personne !== idUser) {
+        throw new Error('Vous êtes pas autorisé à mettre à jour cette ressource')
+      }
+      trajet.merge(payload)
+      await trajet.save()
+    } catch (error) {
+      throw new Error('Erreur lors de la modification du trajet.')
+    }
+  }
+
+  async show(id: number) {
+    try {
+      const trajet = await Trajet.query().where('id', id).preload('ville1').preload('ville2')
+      return trajet
+    } catch (error) {
+      throw new Error('Erreur lors de la récupération du trajet.')
     }
   }
 }
