@@ -21,7 +21,6 @@ export class TrajetService {
   async store(payload: TrajetPayload, idUser: number) {
     try {
       payload.id_personne = idUser
-      payload.dateT = DateTime.now()
       const trajet = Trajet.create(payload)
       return trajet
     } catch (error) {

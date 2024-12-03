@@ -8,5 +8,6 @@ export const createTrajetValidator = vine.compile(
     prix: vine.number().min(0),
     id_ville_1: vine.number().min(0),
     id_ville_2: vine.number().min(0),
+    dateT: vine.string().transform((value) => DateTime.fromISO(value)),
   })
 )
