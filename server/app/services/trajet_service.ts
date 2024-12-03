@@ -86,4 +86,16 @@ export class TrajetService {
       throw new Error("Erreur lors de l'inscription au trajet.")
     }
   }
+  async getPersonnesInscrites(idTrajet: number) {
+    try {
+      const trajet = await Trajet.findOrFail(idTrajet)
+      const personnes = await trajet
+        .related('personnes')
+        .query()
+        .select('id', 'prenom', 'nom', 'username', 'id_ville')
+      return personnes
+    } catch (error) {
+      throw new Error('Erreur lors de la récupération des personnes inscrites.')
+    }
+  }
 }

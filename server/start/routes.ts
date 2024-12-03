@@ -104,4 +104,9 @@ router.post('trajets/:id/inscription', [TrajetController, 'inscription']).middle
     guards: ['api'],
   })
 )
+router.get('trajets/:id/inscription', [TrajetController, 'indexInscription']).middleware(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
 router.get('/marques', [MarquesController, 'marques'])
