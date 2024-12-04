@@ -17,7 +17,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="max-w-4xl mt-10 mx-auto">
+    <div className="max-w-4xl mt-10 mx-auto px-6">
       <div>
         <h1 className="text-4xl text-center font-semibold">Nous contacter</h1>
         <p className="text-base text-center text-gray-600 mt-2">
