@@ -35,6 +35,12 @@ router.get('trajets/createur', [TrajetController, 'indexCreateur']).middleware(
   })
 )
 
+router.get('trajets/inscrits', [TrajetController, 'getTrajetsInscrits']).middleware(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+
 router
   .group(() => {
     router.resource('personnes', PersonnesController).except(['create', 'edit', 'store'])

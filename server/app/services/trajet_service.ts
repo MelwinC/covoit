@@ -117,6 +117,16 @@ export class TrajetService {
     }
   }
 
+  async getTrajetsInscrits(idUser: number) {
+    try {
+      const personne = await Personne.findOrFail(idUser)
+      const trajets = await personne.related('trajetsInscris').query()
+      return trajets
+    } catch (error) {
+      throw new Error('Erreur lors de la récupération des trajets inscrits.')
+    }
+  }
+
   async getTrajetsCree(idUser: number) {
     try {
       const trajets = await Trajet.query().where('id_personne', idUser)
