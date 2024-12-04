@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/select";
 
 const Profil = () => {
+  //TODO voiture + update
+
   return (
     <div className="max-w-4xl mx-auto mt-10">
       <h1 className="text-center font-semibold text-4xl mb-10">Mon profil</h1>
