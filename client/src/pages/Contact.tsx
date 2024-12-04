@@ -1,20 +1,54 @@
+import Toast from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import useAuth from "@/hooks/use-auth";
+import { sendEmail } from "@/services/brevo";
+import { useEffect, useState } from "react";
 
 const Contact = () => {
-  const [formData, setFormData] = useState({});
+  useAuth();
+  
+  const [nom, setNom] = useState("");
+  const [prenom, setPrenom] = useState("");
+  const [email, setEmail] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [message, setMessage] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex pour valider une adresse e-mail
+    return emailRegex.test(email);
   };
 
   const handleSubmit = () => {
-    // TODO
+    if (!nom || !prenom || !email || !telephone || !message) {
+      setErrorMsg("Veuillez remplir tous les champs.");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setErrorMsg("Veuillez entrer une adresse email valide.");
+      return;
+    }
+
+    sendEmail(nom, prenom, email, telephone, message);
+    resetFields();
+
+    Toast(true, "Votre message a bien été envoyé !");
   };
+
+  const resetFields = () => {
+    setNom("");
+    setPrenom("");
+    setEmail("");
+    setTelephone("");
+    setMessage("");
+  };
+
+  useEffect(() => {
+    setErrorMsg(null);
+  }, [nom, prenom, email, telephone, message]);
 
   return (
     <div className="max-w-4xl mt-10 mx-auto">
@@ -32,14 +66,20 @@ const Contact = () => {
             placeholder="Nom"
             id="nom"
             name="nom"
-            onChange={handleChange}
+            value={nom}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNom(e.target.value)
+            }
           />
           <Input
             type="text"
             placeholder="Prénom"
             id="prenom"
             name="prenom"
-            onChange={handleChange}
+            value={prenom}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPrenom(e.target.value)
+            }
           />
         </div>
         <Input
@@ -47,21 +87,31 @@ const Contact = () => {
           placeholder="Email"
           id="email"
           name="email"
-          onChange={handleChange}
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
         />
         <Input
           type="text"
           placeholder="Téléphone"
           id="phone"
           name="phone"
-          onChange={handleChange}
+          value={telephone}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setTelephone(e.target.value)
+          }
         />
         <Textarea
           placeholder="Message"
           id="message"
           name="message"
-          onChange={handleChange}
+          value={message}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+            setMessage(e.target.value)
+          }
         />
+        {errorMsg && <p className="text-red-600 mt-2">{errorMsg}</p>}
         <Button onClick={handleSubmit}>Envoyer</Button>
       </div>
     </div>
