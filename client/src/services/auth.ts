@@ -51,7 +51,6 @@ export async function signIn(user: {
   password: string;
   id_ville: number;
 }): Promise<DecodedToken | string> {
-  console.log("user", user);
   const api = KySingleton.getInstance();
   const response: DecodedToken = await api
     .post("personnes/login", {
@@ -75,7 +74,6 @@ export async function signUp(user: {
   password: string;
   id_ville: number;
 }): Promise<DecodedToken | string> {
-  console.log("user2", user);
   const api = KySingleton.getInstance();
   await api
     .post("personnes", {
