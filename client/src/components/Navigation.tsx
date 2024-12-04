@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { isLoggedIn } from "@/services/auth";
 
 const Navigation = () => {
   const pathname = window.location.pathname;
@@ -36,12 +37,21 @@ const Navigation = () => {
           </ul>
         </div>
         <div>
-          <a
-            href="/auth"
-            className="hidden md:block md:text-white md:px-4 md:py-2.5 md:bg-black md:text-sm md:rounded-md"
-          >
-            Connexion
-          </a>
+          {isLoggedIn() ? (
+            <a
+              href="/profil"
+              className="hidden md:block md:text-white md:px-4 md:py-2.5 md:bg-black md:text-sm md:rounded-md"
+            >
+              Profil
+            </a>
+          ) : (
+            <a
+              href="/auth"
+              className="hidden md:block md:text-white md:px-4 md:py-2.5 md:bg-black md:text-sm md:rounded-md"
+            >
+              Connexion
+            </a>
+          )}
           <div className="md:hidden">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

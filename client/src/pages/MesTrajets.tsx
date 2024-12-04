@@ -1,4 +1,3 @@
-import Trajet from "@/components/Trajet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
@@ -9,11 +8,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, combineDateAndTime } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -21,9 +29,49 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useState } from "react";
+import { getVilles } from "@/services/ville";
+import useAuth from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
+import { createTrajet } from "@/services/trajet";
 
 function MesTrajets() {
+  useAuth();
+
+  const {
+    data: villes,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["villes"],
+    queryFn: getVilles,
+  });
+
+  const [villeIdDep, setVilleIdDep] = useState<number>(0);
+  const [villeIdArr, setVilleIdArr] = useState<number>(0);
   const [date, setDate] = useState<Date>();
+  const [time, setTime] = useState<string>();
+  const [kms, setKms] = useState<number>(0);
+  const [nbPlaces, setNbPlaces] = useState<number>(0);
+  const [prix, setPrix] = useState<number>(0);
+
+  const creerTrajet = async () => {
+    //TODO
+    if(!villeIdDep || !villeIdArr || !date || !time || !kms || !nbPlaces || !prix) {
+      return 
+    } else {
+      await createTrajet(
+        kms,
+        nbPlaces,
+        prix,
+        villeIdDep,
+        villeIdArr,
+        combineDateAndTime(date, time)?.toISOString() ?? new Date().toISOString()
+      );
+    }
+  }
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error fetching villes</div>;
 
   return (
     <main className="max-w-4xl mx-auto px-6">
@@ -58,16 +106,46 @@ function MesTrajets() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-4 py-4">
-                  <Input
-                    id="partir"
-                    placeholder="D'où partez-vous ?"
-                    className="col-span-3"
-                  />
-                  <Input
-                    id="arriver"
-                    placeholder="Où arrivez-vous ?"
-                    className="col-span-3"
-                  />
+                  <Select
+                    onValueChange={(value) => setVilleIdDep(Number(value))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="D'où partez-vous ?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Villes</SelectLabel>
+                        {villes?.map((ville) => (
+                          <SelectItem
+                            key={ville.id}
+                            value={ville.id.toString()}
+                          >
+                            {ville.ville}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <Select
+                    onValueChange={(value) => setVilleIdArr(Number(value))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Où arrivez-vous ?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Villes</SelectLabel>
+                        {villes?.map((ville) => (
+                          <SelectItem
+                            key={ville.id}
+                            value={ville.id.toString()}
+                          >
+                            {ville.ville}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -78,7 +156,7 @@ function MesTrajets() {
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                        {date ? format(date, "PPP") : <span>Quel jour ?</span>}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
@@ -90,28 +168,31 @@ function MesTrajets() {
                       />
                     </PopoverContent>
                   </Popover>
-                  <Input id="heure" placeholder="À ?" className="col-span-3" />
+                  <Input id="heure" className="col-span-3" type="time"/>
+                  <Input id="km" className="col-span-3" placeholder="Nombre de kilomètres" type="number"/>
+                  <Input id="nbPlaces" className="col-span-3" placeholder="Nombre de places" type="number"/>
+                  <Input id="prix" className="col-span-3" placeholder="Prix" type="number"/>
                 </div>
                 <DialogFooter>
-                  <Button type="submit">Créer</Button>
+                  <Button onClick={creerTrajet}>Créer</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
 
             <div className="flex flex-col">
-              <Trajet createMode={true} />
-              <Trajet createMode={true} />
+              {/* <Trajet createMode={true} /> */}
+              {/* <Trajet createMode={true} /> */}
             </div>
           </div>
         </TabsContent>
         <TabsContent value="view">
           <div className="flex flex-col">
-            <Trajet createMode={false} />
-            <Trajet createMode={false} />
-            <Trajet createMode={false} />
-            <Trajet createMode={false} />
-            <Trajet createMode={false} />
-            <Trajet createMode={false} />
+            {/* <Trajet createMode={false} /> */}
+            {/* <Trajet createMode={false} /> */}
+            {/* <Trajet createMode={false} /> */}
+            {/* <Trajet createMode={false} /> */}
+            {/* <Trajet createMode={false} /> */}
+            {/* <Trajet createMode={false} /> */}
           </div>
         </TabsContent>
       </Tabs>
