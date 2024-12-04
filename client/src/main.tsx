@@ -8,20 +8,53 @@ import Navigation from "./components/Navigation.tsx";
 import Contact from "./pages/Contact.tsx";
 import Profil from "./pages/Profil.tsx";
 import MesTrajets from "./pages/MesTrajets.tsx";
+import { Toaster } from "./components/ui/toaster.tsx";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
-      <Navigation />
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route
+          path="/"
+          element={
+            <>
+              <Navigation />
+              <App />
+            </>
+          }
+        />
         <Route path="/auth" element={<Auth />} />
-        <Route path="/mes-trajets" element={<MesTrajets />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/profil" element={<Profil />} />
+        <Route
+          path="/mes-trajets"
+          element={
+            <>
+              <Navigation />
+              <MesTrajets />
+            </>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <>
+              <Navigation />
+              <Contact />
+            </>
+          }
+        />
+        <Route
+          path="/profil"
+          element={
+            <>
+              <Navigation />
+              <Profil />
+            </>
+          }
+        />
       </Routes>
+      <Toaster />
     </QueryClientProvider>
   </BrowserRouter>
 );

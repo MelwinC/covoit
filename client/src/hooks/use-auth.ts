@@ -1,15 +1,20 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { isLoggedIn } from "@/services/auth";
 
 const useAuth = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!isLoggedIn()) {
+    const loggedIn = isLoggedIn();
+    if (!loggedIn && location.pathname !== "/auth") {
       navigate("/auth");
+    } else if (loggedIn && location.pathname === "/auth") {
+      navigate("/");
     }
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 };
+
 
 export default useAuth;

@@ -1,12 +1,14 @@
 export type Trajet = {
   id: number;
   km: number;
-  place_proposees: number;
+  placeProposees: number;
   dateT: string;
-  id_personne: number;
+  idPersonne: number;
   created_at: Date;
   updated_at: Date;
-  id_ville_1: number;
-  id_ville_2: number;
+  idVille1: number;
+  idVille2: number;
   prix: number;
+  createdAt: string;
+  updatedAt: string;
 }

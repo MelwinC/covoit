@@ -1,5 +1,4 @@
 import Trajet from "./components/Trajet";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useAuth from "./hooks/use-auth";
 import {
@@ -18,7 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { useQuery } from "@tanstack/react-query";
 import { getVilles } from "./services/ville";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "./components/ui/calendar";
@@ -47,14 +46,35 @@ function App() {
   });
 
   const [date, setDate] = useState<Date>();
-  const [time, setTime] = useState<string>();
   const [villeIdDep, setVilleIdDep] = useState<number>(0);
   const [villeIdArr, setVilleIdArr] = useState<number>(0);
+  const [filteredTrajets, setFilteredTrajets] = useState(trajets || []);
+
+  const handleSearch = (): void => {
+    if (!trajets) return;
+  
+    const filtered = trajets.filter((trajet) => {
+      const [trajetDate] = trajet.dateT.split("T");
+    
+      const matchVilleDep = villeIdDep ? trajet.idVille1 === villeIdDep : true;
+      const matchVilleArr = villeIdArr ? trajet.idVille2 === villeIdArr : true;
+  
+      const matchDate = date ? trajetDate === format(date, "yyyy-MM-dd") : true;
+  
+      return matchVilleDep && matchVilleArr && matchDate;
+    });
+  
+    setFilteredTrajets(filtered);
+  };
+
+  useEffect(() => {
+    if (trajets) {
+      setFilteredTrajets(trajets);
+    }
+  }, [trajets]);
 
   if (isLoadingVilles || isLoadingTrajets) return <div>Loading...</div>;
   if (errorVilles || errorTrajets) return <div>Error fetching villes or trajets</div>;
-
-  //TODO filter
 
   return (
     <main className="max-w-4xl mx-auto px-6">
@@ -129,12 +149,14 @@ function App() {
               setTime(e.target.value)
             }
           />
-         </div>
-        <Button className="w-full md:w-auto">Rechercher</Button>
+        </div>
+        <Button className="w-full md:w-auto" onClick={handleSearch}>
+          Rechercher
+        </Button>
       </div>
 
       <div className="flex flex-col">
-        {trajets?.map(trajet => <Trajet key={trajet?.id} trajet={trajet} createMode={false} />)}
+        {filteredTrajets?.map(trajet => <Trajet key={trajet?.id} trajet={trajet} createMode={false} />)}
       </div>
     </main>
   );

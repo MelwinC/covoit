@@ -14,9 +14,13 @@ import { useQuery } from "@tanstack/react-query";
 import { getVilles } from "@/services/ville";
 import { signIn, signUp } from "@/services/auth";
 import useAuth from "@/hooks/use-auth";
+import Toast from "./Toast";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
   useAuth();
+  
+  const navigate = useNavigate();
   
   const {
     data: villes,
@@ -77,12 +81,13 @@ const Auth = () => {
       password,
       id_ville: villeId
     }
-    console.log(user);
     if(variant === "login") {
       await signIn(user)
     } else {
       await signUp(user);
     }
+    navigate("/");
+    Toast(true, `Bienvenue, ${email}`)
   };
 
   useEffect(() => {

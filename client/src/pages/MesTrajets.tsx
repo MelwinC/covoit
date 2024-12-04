@@ -32,7 +32,13 @@ import { useState } from "react";
 import { getVilles } from "@/services/ville";
 import useAuth from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import { createTrajet } from "@/services/trajet";
+import {
+  createTrajet,
+  getTrajetsConducteur,
+  getTrajetsPassager,
+} from "@/services/trajet";
+import Trajet from "@/components/Trajet";
+import Toast from "@/components/Toast";
 
 function MesTrajets() {
   useAuth();
@@ -46,6 +52,26 @@ function MesTrajets() {
     queryFn: getVilles,
   });
 
+  const {
+    data: trajetsConducteur,
+    isLoading: isLoadingTrajetsConducteur,
+    error: errorTrajetsConducteur,
+    refetch: refetchTrajetsConducteur,
+  } = useQuery({
+    queryKey: ["trajetsConducteur"],
+    queryFn: getTrajetsConducteur,
+  });
+
+  const {
+    data: trajetsPassager,
+    isLoading: isLoadingTrajetsPassager,
+    error: errorTrajetsPassager,
+  } = useQuery({
+    queryKey: ["trajetsPassager"],
+    queryFn: getTrajetsPassager,
+  });
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [villeIdDep, setVilleIdDep] = useState<number>(0);
   const [villeIdArr, setVilleIdArr] = useState<number>(0);
   const [date, setDate] = useState<Date>();
@@ -55,23 +81,37 @@ function MesTrajets() {
   const [prix, setPrix] = useState<number>(0);
 
   const creerTrajet = async () => {
-    //TODO
-    if(!villeIdDep || !villeIdArr || !date || !time || !kms || !nbPlaces || !prix) {
-      return 
-    } else {
-      await createTrajet(
-        kms,
-        nbPlaces,
-        prix,
-        villeIdDep,
-        villeIdArr,
-        combineDateAndTime(date, time)?.toISOString() ?? new Date().toISOString()
-      );
+    if (
+      !villeIdDep ||
+      !villeIdArr ||
+      !date ||
+      !time ||
+      !kms ||
+      !nbPlaces ||
+      !prix
+    ) {
+      Toast(false, "Veuillez remplir tous les champs.")
+      return;
     }
-  }
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error fetching villes</div>;
+    const datetime =
+    combineDateAndTime(date, time)?.toISOString() ?? new Date().toISOString();
+
+    try {
+      await createTrajet(kms, nbPlaces, prix, villeIdDep, villeIdArr, datetime);
+
+      Toast(true, "Votre trajet a bien été crée !");
+
+      await refetchTrajetsConducteur();
+
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error("Erreur lors de la création du trajet :", error);
+    }
+  };
+
+  if (isLoading || isLoadingTrajetsConducteur || isLoadingTrajetsPassager) return <div>Loading...</div>;
+  if (error || errorTrajetsConducteur || errorTrajetsPassager) return <div>Error fetching villes</div>;
 
   return (
     <main className="max-w-4xl mx-auto px-6">
@@ -86,17 +126,19 @@ function MesTrajets() {
       <Tabs defaultValue="create" className="w-full mt-10 mb-5">
         <TabsList className="w-full">
           <TabsTrigger value="create" className="w-full">
-            Créer un trajet
+            Conducteur
           </TabsTrigger>
           <TabsTrigger value="view" className="w-full">
-            Mes trajets
+            Passager
           </TabsTrigger>
         </TabsList>
         <TabsContent value="create">
           <div className="mt-5">
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button>Créer un trajet</Button>
+                <Button onClick={() => setIsDialogOpen(true)}>
+                  Créer un trajet
+                </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -168,10 +210,50 @@ function MesTrajets() {
                       />
                     </PopoverContent>
                   </Popover>
-                  <Input id="heure" className="col-span-3" type="time"/>
-                  <Input id="km" className="col-span-3" placeholder="Nombre de kilomètres" type="number"/>
-                  <Input id="nbPlaces" className="col-span-3" placeholder="Nombre de places" type="number"/>
-                  <Input id="prix" className="col-span-3" placeholder="Prix" type="number"/>
+                  <Input
+                    id="heure"
+                    className="col-span-3"
+                    type="time"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setTime(e.target.value)
+                    }
+                  />
+                  <Input
+                    id="kms"
+                    className="col-span-3"
+                    placeholder="Nombre de kilomètres"
+                    type="number"
+                    min={0}
+                    value={kms > 0 ? kms : ""}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const value = Number(e.target.value);
+                      setKms(value >= 0 ? value : 0);
+                    }}
+                  />
+                  <Input
+                    id="nbPlaces"
+                    className="col-span-3"
+                    placeholder="Nombre de places"
+                    type="number"
+                    min={0}
+                    value={nbPlaces > 0 ? nbPlaces : ""}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const value = Number(e.target.value);
+                      setNbPlaces(value >= 0 ? value : 0);
+                    }}
+                  />
+                  <Input
+                    id="prix"
+                    className="col-span-3"
+                    placeholder="Prix"
+                    type="number"
+                    min={0}
+                    value={prix > 0 ? prix : ""}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const value = Number(e.target.value);
+                      setPrix(value >= 0 ? value : 0);
+                    }}
+                  />
                 </div>
                 <DialogFooter>
                   <Button onClick={creerTrajet}>Créer</Button>
@@ -180,19 +262,17 @@ function MesTrajets() {
             </Dialog>
 
             <div className="flex flex-col">
-              {/* <Trajet createMode={true} /> */}
-              {/* <Trajet createMode={true} /> */}
+              {trajetsConducteur?.map((trajet) => (
+                <Trajet key={trajet?.id} trajet={trajet} createMode={true} refetchTrajetsConducteur={refetchTrajetsConducteur} />
+              ))}
             </div>
           </div>
         </TabsContent>
         <TabsContent value="view">
           <div className="flex flex-col">
-            {/* <Trajet createMode={false} /> */}
-            {/* <Trajet createMode={false} /> */}
-            {/* <Trajet createMode={false} /> */}
-            {/* <Trajet createMode={false} /> */}
-            {/* <Trajet createMode={false} /> */}
-            {/* <Trajet createMode={false} /> */}
+            {trajetsPassager?.map((trajet) => (
+              <Trajet key={trajet?.id} trajet={trajet} createMode={false} />
+            ))}
           </div>
         </TabsContent>
       </Tabs>
