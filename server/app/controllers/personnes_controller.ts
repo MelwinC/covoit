@@ -85,4 +85,12 @@ export default class PersonnesController {
       return response.status(400).send({ error: err.message })
     }
   }
+
+  async information({ auth, response }: HttpContext) {
+    try {
+      return response.status(200).send(auth.user)
+    } catch (err) {
+      return response.status(400).send({ error: err.message })
+    }
+  }
 }

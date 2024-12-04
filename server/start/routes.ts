@@ -23,6 +23,12 @@ router.get('/', async () => {
   }
 })
 
+router.get('personnes/information', [PersonnesController, 'information']).middleware(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+
 router
   .group(() => {
     router.resource('personnes', PersonnesController).except(['create', 'edit', 'store'])
@@ -109,4 +115,5 @@ router.get('trajets/:id/inscription', [TrajetController, 'indexInscription']).mi
     guards: ['api'],
   })
 )
+
 router.get('/marques', [MarquesController, 'marques'])
