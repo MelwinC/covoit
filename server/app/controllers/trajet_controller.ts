@@ -101,4 +101,18 @@ export default class TrajetController {
       return response.status(400).send({ error: error.message })
     }
   }
+
+  /**
+   * inscrpiton trajet
+   */
+  async indexCreateur({ response, auth }: HttpContext) {
+    try {
+      const user = auth.getUserOrFail()
+      const personnes = await this.trajetService.getTrajetsCree(user.id)
+      return response.status(200).send(personnes)
+    } catch (error) {
+      console.warn(error)
+      return response.status(400).send({ error: error.message })
+    }
+  }
 }
