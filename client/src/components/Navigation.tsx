@@ -1,3 +1,5 @@
+import { isLoggedIn } from "@/services/auth";
+
 const Navigation = () => {
   const pathname = window.location.pathname;
   const isAuthPage = pathname === "/auth" || pathname === "/login";
@@ -25,14 +27,25 @@ const Navigation = () => {
             </li>
           </ul>
         </div>
-        <div>
-          <a
-            href="/auth"
-            className="text-white px-4 py-2.5 bg-black text-sm rounded-md"
-          >
-            Connexion
-          </a>
-        </div>
+        {isLoggedIn() ? (
+          <div>
+            <a
+              href="/profil"
+              className="text-white px-4 py-2.5 bg-black text-sm rounded-md"
+            >
+              Profil
+            </a>
+          </div>
+        ) : (
+          <div>
+            <a
+              href="/auth"
+              className="text-white px-4 py-2.5 bg-black text-sm rounded-md"
+            >
+              Connexion
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
