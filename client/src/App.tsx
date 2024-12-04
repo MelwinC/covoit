@@ -77,7 +77,7 @@ function App() {
   if (errorVilles || errorTrajets) return <div>Error fetching villes or trajets</div>;
 
   return (
-    <main className="max-w-4xl mx-auto">
+    <main className="max-w-4xl mx-auto px-6">
       <h1 className="text-4xl font-bold text-center mt-10">
         AlloCovoit - Voyagez ensemble
       </h1>
@@ -86,60 +86,73 @@ function App() {
         économique et écologique
       </p>
 
-      <div className="flex items-center gap-2 my-10 bg-gray-200 p-4 rounded-lg">
-        <Select onValueChange={(value) => setVilleIdDep(Number(value))}>
-          <SelectTrigger>
-            <SelectValue placeholder="D'où partez-vous ?" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Villes</SelectLabel>
-              {villes?.map((ville) => (
-                <SelectItem key={ville.id} value={ville.id.toString()}>
-                  {ville.ville}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Select onValueChange={(value) => setVilleIdArr(Number(value))}>
-          <SelectTrigger>
-            <SelectValue placeholder="Où arrivez-vous ?" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Villes</SelectLabel>
-              {villes?.map((ville) => (
-                <SelectItem key={ville.id} value={ville.id.toString()}>
-                  {ville.ville}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "justify-start text-left font-normal",
-                !date && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {date ? format(date, "PPP") : <span>Quel jour ?</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-        <Button onClick={handleSearch}>Rechercher</Button>
+      <div className="flex flex-col md:flex-row items-center gap-2 my-10 bg-gray-200 w-full sm:w-2/3 mx-auto md:w-full p-4 rounded-lg">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <Select onValueChange={(value) => setVilleIdDep(Number(value))}>
+            <SelectTrigger>
+              <SelectValue placeholder="D'où partez-vous ?" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Villes</SelectLabel>
+                {villes?.map((ville) => (
+                  <SelectItem key={ville.id} value={ville.id.toString()}>
+                    {ville.ville}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select onValueChange={(value) => setVilleIdArr(Number(value))}>
+            <SelectTrigger>
+              <SelectValue placeholder="Où arrivez-vous ?" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Villes</SelectLabel>
+                {villes?.map((ville) => (
+                  <SelectItem key={ville.id} value={ville.id.toString()}>
+                    {ville.ville}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "justify-start text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date ? format(date, "PPP") : <span>Quel jour ?</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          <Input
+            type="time"
+            id="heure"
+            name="heure"
+            className="w-auto"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTime(e.target.value)
+            }
+          />
+        </div>
+        <Button className="w-full md:w-auto" onClick={handleSearch}>
+          Rechercher
+        </Button>
       </div>
 
       <div className="flex flex-col">
