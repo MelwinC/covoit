@@ -1,6 +1,6 @@
 import Personne from '#models/personne'
 import Ville from '#models/ville'
-import db from '@adonisjs/lucid/services/db'
+
 interface PersonnePayload {
   prenom: string
   nom: string

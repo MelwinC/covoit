@@ -17,7 +17,7 @@ export class TrajetService {
       return trajets.map((trajet) => ({
         id: trajet.id,
         km: trajet.km,
-        place_proposeess: trajet.place_proposees,
+        place_proposees: trajet.place_proposees,
         dateT: trajet.dateT,
         id_personne: trajet.id_personne,
         createdAt: trajet.createdAt,

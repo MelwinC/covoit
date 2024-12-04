@@ -67,13 +67,15 @@ router
 
 router
   .group(() => {
-    router.resource('villes', VillesController).only(['index', 'show'])
+    router.resource('villes', VillesController).only(['show'])
   })
   .middleware(
     middleware.auth({
       guards: ['api'],
     })
   )
+
+router.get('villes', [VillesController, 'index'])
 
 router
   .group(() => {
