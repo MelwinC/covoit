@@ -26,7 +26,7 @@ function MesTrajets() {
   const [date, setDate] = useState<Date>();
 
   return (
-    <main className="max-w-4xl mx-auto">
+    <main className="max-w-4xl mx-auto px-6">
       <h1 className="text-4xl font-bold text-center mt-10">
         Création, Visualisation - Mes trajets
       </h1>

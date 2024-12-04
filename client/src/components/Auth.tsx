@@ -30,11 +30,11 @@ const Register = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
-      <h1 className="text-center font-semibold text-4xl mb-10">
+    <div className="w-full h-full flex flex-col items-center justify-center px-6">
+      <h1 className="text-center font-semibold text-2xl md:text-4xl mb-10">
         {variant === "login" ? "Connectez-vous" : "Inscrivez-vous"} à AlloCovoit
       </h1>
-      <div className="w-1/3">
+      <div className="w-full md:w-2/3 lg:w-1/3">
         {variant === "register" && step === 1 && (
           <div className="flex flex-col gap-4">
             <Input type="text" placeholder="Nom" />
