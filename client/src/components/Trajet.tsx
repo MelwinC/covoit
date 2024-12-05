@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -18,25 +24,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useEffect, useState } from "react";
 import useAuth from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
-import { getVilleById, getVilles } from "@/services/ville";
-import { Trajet as TrajetType } from "@/types/trajet";
+import { cn } from "@/lib/utils";
 import { getUserInfo } from "@/services/auth";
 import { deleteTrajet, reserver, updateTrajet } from "@/services/trajet";
-import Toast from "./Toast";
+import { getVilleById, getVilles } from "@/services/ville";
+import { Trajet as TrajetType } from "@/types/trajet";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { HTTPError } from "ky";
+import { Calendar as CalendarIcon, Pencil, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import Toast from "./Toast";
 
 type Props = {
   trajet: TrajetType;
@@ -159,7 +158,7 @@ const Trajet = ({ trajet, createMode, refetchTrajetsConducteur }: Props) => {
           hour: "2-digit",
           minute: "2-digit",
         })}`}</p>
-        <p>{`${kms} kms`}</p>
+        <p>{`${prix} €`}</p>
       </div>
       {createMode ? (
         <div className="flex items-center gap-4">
