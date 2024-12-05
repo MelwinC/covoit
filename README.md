@@ -39,6 +39,7 @@ pnpm i
 
 ## Lancement du server
 
+_Une version de node > 22 est nécessaire pour AdonisJS_
 
 **BDD**
 
@@ -47,8 +48,6 @@ Un fichier docker compose est à disposition pour l'utilisation de la bdd Postgr
 ```bash
 docker compose up -d || docker-compose up -d
 ```
-
-**Lancement du server**
 
 Commande pour lancer le server
 
