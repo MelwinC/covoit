@@ -23,6 +23,7 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "./components/ui/calendar";
 import { cn } from "./lib/utils";
 import { getTrajets } from "./services/trajet";
+import { Input } from "./components/ui/input";
 
 function App() {
   useAuth();
@@ -145,9 +146,6 @@ function App() {
             id="heure"
             name="heure"
             className="w-auto"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setTime(e.target.value)
-            }
           />
         </div>
         <Button className="w-full md:w-auto" onClick={handleSearch}>
