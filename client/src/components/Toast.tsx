@@ -14,7 +14,7 @@ const Toast = (success: boolean, description: string) => {
       </span>
     ),
     duration: 3000,
-    variant: "success",
+    variant: "default",
   });
 };
 
