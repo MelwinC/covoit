@@ -89,10 +89,6 @@ pipeline {
                         # Build client image
                         docker build -t ${REGISTRY}-client:${BUILD_ID} -f client/Dockerfile client
                         docker tag ${REGISTRY}-client:${BUILD_ID} ${REGISTRY}-client:latest
-
-                        # Build server image
-                        docker build -t ${REGISTRY}-server:${BUILD_ID} -f server/Dockerfile server
-                        docker tag ${REGISTRY}-server:${BUILD_ID} ${REGISTRY}-server:latest
                     """
                 }
             }
@@ -108,8 +104,6 @@ pipeline {
                         sh """
                             docker push ${REGISTRY}-client:${BUILD_ID}
                             docker push ${REGISTRY}-client:latest
-                            docker push ${REGISTRY}-server:${BUILD_ID}
-                            docker push ${REGISTRY}-server:latest
                         """
                     }
                 }

@@ -1,5 +1,5 @@
 # Étape 1 : build
-FROM node:23.11.0-alpine3.19 AS builder
+FROM node:23.11.0-alpine AS builder
 
 WORKDIR /app
 
