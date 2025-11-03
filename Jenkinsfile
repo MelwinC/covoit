@@ -86,8 +86,13 @@ pipeline {
                 script {
                     echo "→ Docker build ${REGISTRY}:${BUILD_ID}"
                     sh """
-                        docker build -t ${REGISTRY}:${BUILD_ID} .
-                        docker tag ${REGISTRY}:${BUILD_ID} ${REGISTRY}:latest
+                        # Build client image
+                        docker build -t ${REGISTRY}-client:${BUILD_ID} -f client/Dockerfile client
+                        docker tag ${REGISTRY}-client:${BUILD_ID} ${REGISTRY}-client:latest
+
+                        # Build server image
+                        docker build -t ${REGISTRY}-server:${BUILD_ID} -f server/Dockerfile server
+                        docker tag ${REGISTRY}-server:${BUILD_ID} ${REGISTRY}-server:latest
                     """
                 }
             }
@@ -101,8 +106,10 @@ pipeline {
                         sh 'echo $GH_TOKEN | docker login ghcr.io -u $GH_USER --password-stdin'
                         echo "→ Pushing ${REGISTRY}:${BUILD_ID} and :latest"
                         sh """
-                            docker push ${REGISTRY}:${BUILD_ID}
-                            docker push ${REGISTRY}:latest
+                            docker push ${REGISTRY}-client:${BUILD_ID}
+                            docker push ${REGISTRY}-client:latest
+                            docker push ${REGISTRY}-server:${BUILD_ID}
+                            docker push ${REGISTRY}-server:latest
                         """
                     }
                 }
