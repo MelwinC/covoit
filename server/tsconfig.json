@@ -4,6 +4,7 @@
     "rootDir": "./",
     "outDir": "./build",
     "baseUrl": ".",
+    "types": ["@types/jest"], 
     "paths": {
       "#models/*": ["app/models/*"],
       "#controllers/*": ["app/controllers/Http/*"],
