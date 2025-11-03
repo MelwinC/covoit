@@ -1,21 +1,29 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'node23'
+    }
+
     environment {
-        REPO_URL = 'https://github.com/MelwinC/covoit.git'
+        GITHUB_USER = 'MelwinC'
+        GITHUB_REPO = 'covoit'
+        REPO_URL    = "https://github.com/${GITHUB_USER}/${GITHUB_REPO}.git"
+        IMAGE_NAME  = "${GITHUB_REPO}"
+        REGISTRY    = "ghcr.io/${GITHUB_USER}/${IMAGE_NAME}"
+        TAG         = "j-version-1.0.${env.BUILD_ID}"
+    }
+
+    options {
+        timestamps()
     }
 
     stages {
-        stage('Hello') {
-            steps {
-                echo 'Hello World'
-            }
-        }
-
         stage('Checkout') {
             steps {
+                echo "Checkout repository ${REPO_URL}"
                 checkout([$class: 'GitSCM',
-                    branches: [[name: '*/main']], // ou '*/master' selon ton repo
+                    branches: [[name: '*/main']],
                     doGenerateSubmoduleConfigurations: false,
                     extensions: [],
                     userRemoteConfigs: [[
@@ -26,16 +34,91 @@ pipeline {
             }
         }
 
-        stage('Tag') {
+        stage('Verify pnpm installation') {
+            steps {
+                sh 'node -v'
+                sh 'pnpm -v'
+            }
+        }
+
+        stage('Install dependencies - Client') {
+            steps {
+                dir('client') {
+                    echo "Installing client dependencies via pnpm"
+                    sh 'pnpm install --frozen-lockfile'
+                }
+            }
+        }
+
+        stage('Install dependencies - Server') {
+            steps {
+                dir('server') {
+                    echo "Installing server dependencies via pnpm"
+                    sh 'pnpm install --frozen-lockfile'
+                }
+            }
+        }
+
+        stage('Run tests') {
+            steps {
+                script {
+                    echo "→ Running tests"
+                    sh 'cd client && pnpm test'
+                    sh 'cd server && pnpm test'
+                }
+            }
+        }
+
+        stage('Build project') {
+            steps {
+                echo "Building project"
+                dir('client') {
+                    sh 'pnpm build'
+                }
+                dir('server') {
+                    sh 'pnpm build'
+                }
+            }
+        }
+
+        stage('Build Docker image') {
+            steps {
+                script {
+                    echo "→ Docker build ${REGISTRY}:${BUILD_ID}"
+                    sh """
+                        docker build -t ${REGISTRY}:${BUILD_ID} .
+                        docker tag ${REGISTRY}:${BUILD_ID} ${REGISTRY}:latest
+                    """
+                }
+            }
+        }
+
+        stage('Push image to GitHub Packages') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'CREDENTIALS_ID_GHCR', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
+                    script {
+                        echo "→ Login to ghcr.io"
+                        sh 'echo $GH_TOKEN | docker login ghcr.io -u $GH_USER --password-stdin'
+                        echo "→ Pushing ${REGISTRY}:${BUILD_ID} and :latest"
+                        sh """
+                            docker push ${REGISTRY}:${BUILD_ID}
+                            docker push ${REGISTRY}:latest
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Tag repository') {
             steps {
                 withCredentials([gitUsernamePassword(credentialsId: 'github-credentials', gitToolName: 'Default')]) {
                     script {
-                        def versionTag = "j-version-1.0${env.BUILD_ID}"
+                        echo "→ Creating git tag ${TAG}"
                         sh """
+                            git config user.email "jenkins@${GITHUB_REPO}.local"
                             git config user.name "jenkins"
-                            git config user.email "jenkins@localhost"
-                            git tag -a ${versionTag} -m "Tag by Jenkins"
-                            git push origin ${versionTag}
+                            git tag -a ${TAG} -m "Tag by Jenkins ${TAG}"
+                            git push origin ${TAG}
                         """
                     }
                 }
