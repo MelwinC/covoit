@@ -5,7 +5,6 @@
     "outDir": "./build",
     "baseUrl": ".",
     "types": ["@types/jest"],
-    "exclude": ["node_modules", "build"],
     "paths": {
       "#models/*": ["app/models/*"],
       "#controllers/*": ["app/controllers/Http/*"],
