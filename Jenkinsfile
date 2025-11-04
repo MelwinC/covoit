@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        GITHUB_USER = 'MelwinC'
+        GITHUB_USER = 'melwinc'
         GITHUB_REPO = 'covoit'
         REPO_URL    = "https://github.com/${GITHUB_USER}/${GITHUB_REPO}.git"
         IMAGE_NAME  = "${GITHUB_REPO}"
@@ -112,7 +112,7 @@ pipeline {
 
         stage('Tag repository') {
             steps {
-                withCredentials([gitUsernamePassword(credentialsId: 'github-credentials', gitToolName: 'Default')]) {
+                withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
                     script {
                         echo "→ Creating git tag ${TAG}"
                         sh """
