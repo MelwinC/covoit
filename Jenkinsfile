@@ -23,7 +23,7 @@ pipeline {
             steps {
                 echo "Checkout repository ${REPO_URL}"
                 checkout([$class: 'GitSCM',
-                    branches: [[name: '*/main']],
+                    branches: [[name: '*/jenkins']],
                     doGenerateSubmoduleConfigurations: false,
                     extensions: [],
                     userRemoteConfigs: [[
@@ -87,7 +87,9 @@ pipeline {
                     sh """
                         # Build client image
                         docker build -t ${REGISTRY}-client:${BUILD_ID} -f client/Dockerfile client
+                        docker build -t ${REGISTRY}-server:${BUILD_ID} -f server/Dockerfile server
                         docker tag ${REGISTRY}-client:${BUILD_ID} ${REGISTRY}-client:latest
+                        docker tag ${REGISTRY}-server:${BUILD_ID} ${REGISTRY}-server:latest
                     """
                 }
             }
@@ -100,7 +102,9 @@ pipeline {
                         sh """
                             echo "${GIT_TOKEN}" | docker login ghcr.io -u ${GIT_USER} --password-stdin
                             docker push ${REGISTRY}-client:${BUILD_ID} 
+                            docker push ${REGISTRY}-server:${BUILD_ID} 
                             docker push ${REGISTRY}-client:latest
+                            docker push ${REGISTRY}-server:latest
                         """
                     }
                 }
