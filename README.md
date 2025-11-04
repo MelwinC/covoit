@@ -77,5 +77,5 @@ pnpm dev
 ## Build du projet
 
 ```bash
-npm build
+pnpm build
 ```
