@@ -28,7 +28,7 @@ pipeline {
                     extensions: [],
                     userRemoteConfigs: [[
                         url: "${REPO_URL}",
-                        credentialsId: 'github-credentials'
+                        credentialsId: 'github-token'
                     ]]
                 ])
             }
@@ -62,7 +62,7 @@ pipeline {
         stage('Run tests') {
             steps {
                 script {
-                    echo "→ Running tests"
+                    echo "Running tests"
                     sh 'cd client && pnpm test'
                     sh 'cd server && pnpm test'
                 }
@@ -80,11 +80,10 @@ pipeline {
                 }
             }
         }
-
         stage('Build Docker image') {
             steps {
                 script {
-                    echo "→ Docker build ${REGISTRY}:${BUILD_ID}"
+                    echo "Docker build ${REGISTRY}:${BUILD_ID}"
                     sh """
                         # Build client image
                         docker build -t ${REGISTRY}-client:${BUILD_ID} -f client/Dockerfile client
@@ -93,28 +92,25 @@ pipeline {
                 }
             }
         }
-
         stage('Push image to GitHub Packages') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'CREDENTIALS_ID_GHCR', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
+                withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
                     script {
-                        echo "→ Login to ghcr.io"
-                        sh 'echo $GH_TOKEN | docker login ghcr.io -u $GH_USER --password-stdin'
-                        echo "→ Pushing ${REGISTRY}:${BUILD_ID} and :latest"
+                        echo "Login to GitHub Container Registry"
                         sh """
-                            docker push ${REGISTRY}-client:${BUILD_ID}
+                            echo "${GIT_TOKEN}" | docker login ghcr.io -u ${GIT_USER} --password-stdin
+                            docker push ${REGISTRY}-client:${BUILD_ID} 
                             docker push ${REGISTRY}-client:latest
                         """
                     }
                 }
             }
         }
-
         stage('Tag repository') {
             steps {
                 withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
                     script {
-                        echo "→ Creating git tag ${TAG}"
+                        echo "Creating git tag ${TAG}"
                         sh """
                             git config user.email "jenkins@${GITHUB_REPO}.local"
                             git config user.name "jenkins"
