@@ -4,7 +4,8 @@ Ce projet a été crée dans le cadre du cours d'architecture logicielle en prem
 
 ## Stack
 
-**Client**
+### Client
+
 - React
 - Typescript
 - ViteJS
@@ -13,13 +14,13 @@ Ce projet a été crée dans le cadre du cours d'architecture logicielle en prem
 - Ky
 - Brevo
 
-**Server**
+### Server
+
 - AdonisJS
 - TypeScript
 - Lucid
 
 ## Get started
-
 
 Créez un fichier .env à partir des fichiers .env.example présents dans les packages client et server
 
@@ -39,9 +40,9 @@ pnpm i
 
 ## Lancement du server
 
-_Une version de node > 22 est nécessaire pour AdonisJS_
+### Une version de node > 22 est nécessaire pour AdonisJS
 
-**BDD**
+#### BDD
 
 Un fichier docker compose est à disposition pour l'utilisation de la bdd PostgreSQL et le viewer PgAdmin4
 
@@ -67,7 +68,7 @@ Commande pour afficher toutes les routes de l'API
 node ace list:routes
 ```
 
-## Lancement du client 
+## Lancement du client
 
 ```bash
 pnpm dev
