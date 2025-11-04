@@ -73,3 +73,9 @@ node ace list:routes
 ```bash
 pnpm dev
 ```
+
+## Build du projet
+
+```bash
+npm build
+```
